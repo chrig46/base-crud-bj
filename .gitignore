@@ -1,0 +1,67 @@
+# Fichiers et dossiers non-POO
+app1/
+app-procedural/
+index_procedural.php
+add.php
+edit.php
+list.php
+delete.php
+#upload.php
+database_setup.sql
+
+# Documentation complète
+docs/
+
+# Fichiers uploadés
+uploads/*
+!uploads/.gitkeep
+
+# Fichiers temporaires et cache
+*.tmp
+*.temp
+*.cache
+.DS_Store
+Thumbs.db
+
+# Fichiers de configuration sensibles
+.env
+.env.local
+
+# Logs
+*.log
+logs/
+
+# Fichiers IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Fichiers système Windows
+desktop.ini
+$RECYCLE.BIN/
+
+# Fichiers système macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Fichiers système Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+
+# Dépendances (si vous utilisez Composer plus tard)
+vendor/
+composer.lock
+
+# Fichiers de sauvegarde
+*.bak
+*.backup
+*.old
+
+# Fichiers de test temporaires
+test_*.php
+debug_*.php
