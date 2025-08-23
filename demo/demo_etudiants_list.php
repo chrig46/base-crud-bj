@@ -34,7 +34,7 @@ if ($_POST && isset($_POST['supprimer'])) {
             }
         }
     } catch (Exception $e) {
-        $message = Alert::error('Erreur : ' . Security::escape($e->getMessage()));
+        $message = Alert::error('Erreur : ' . $e->getMessage());
     }
 }
 
@@ -53,7 +53,7 @@ try {
     
 } catch (Exception $e) {
     $etudiants = [];
-    $message = Alert::error('Erreur de chargement : ' . Security::escape($e->getMessage()));
+    $message = Alert::error('Erreur de chargement : ' . $e->getMessage());
 }
 
 ?>

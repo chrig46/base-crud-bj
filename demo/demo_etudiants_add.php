@@ -66,7 +66,7 @@ if ($_POST && isset($_POST['ajouter'])) {
         }
         
     } catch (Exception $e) {
-        $message = Alert::error('Erreur : ' . Security::escape($e->getMessage()));
+        $message = Alert::error('Erreur : ' . $e->getMessage());
         $formData = $_POST;
     }
 }
@@ -77,7 +77,7 @@ try {
     $filieres = $filiereModel->read();
 } catch (Exception $e) {
     $filieres = [];
-    $message = Alert::error('Erreur de chargement : ' . Security::escape($e->getMessage()));
+    $message = Alert::error('Erreur de chargement : ' . $e->getMessage());
 }
 
 ?>

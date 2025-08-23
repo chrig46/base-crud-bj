@@ -81,7 +81,7 @@ if ($_POST) {
         }
         
     } catch (Exception $e) {
-        $message = Alert::error('Erreur : ' . Security::escape($e->getMessage()));
+        $message = Alert::error('Erreur : ' . $e->getMessage());
     }
 }
 
@@ -91,7 +91,7 @@ try {
     $filieres = $filiereModel->read();
 } catch (Exception $e) {
     $filieres = [];
-    $message = Alert::error('Erreur de chargement : ' . Security::escape($e->getMessage()));
+    $message = Alert::error('Erreur de chargement : ' . $e->getMessage());
 }
 
 ?>

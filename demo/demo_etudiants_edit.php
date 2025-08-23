@@ -70,7 +70,7 @@ if ($_POST && isset($_POST['modifier'])) {
         }
         
     } catch (Exception $e) {
-        $message = Alert::error('Erreur : ' . Security::escape($e->getMessage()));
+        $message = Alert::error('Erreur : ' . $e->getMessage());
     }
 }
 
@@ -84,7 +84,7 @@ try {
         exit;
     }
 } catch (Exception $e) {
-    $message = Alert::error('Erreur lors du chargement : ' . Security::escape($e->getMessage()));
+    $message = Alert::error('Erreur lors du chargement : ' . $e->getMessage());
 }
 
 // Chargement des filières pour la liste déroulante
