@@ -20,8 +20,8 @@ $stats = ['etudiants' => 0, 'filieres' => 0];
 
 // Test de connexion et récupération des statistiques
 try {
-    $etudiantModel = new Model('etudiants');
-    $filiereModel = new Model('filieres');
+    $etudiantModel = new Model('etudiants', 'id');
+    $filiereModel = new Model('filieres', 'id');
     
     $etudiants = $etudiantModel->read();
     $filieres = $filiereModel->read();
@@ -118,7 +118,7 @@ try {
                             <div class="col-md-6">
                                 <h6 class="text-success">Utilisation dans cette demo</h6>
                                 <ul class="list-unstyled">
-                                    <li>• <code>new Model('etudiants')</code> - CRUD automatique</li>
+                                    <li>• <code>new Model('etudiants', 'id')</code> - CRUD automatique</li>
                                     <li>• <code>Security::cleanInput()</code> - nettoyage</li>
                                     <li>• <code>Security::escape()</code> - protection XSS</li>
                                     <li>• <code>Alert::success()</code> - messages</li>

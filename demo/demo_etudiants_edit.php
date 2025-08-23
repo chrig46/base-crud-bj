@@ -31,7 +31,7 @@ if ($id <= 0) {
 // Traitement de la soumission du formulaire
 if ($_POST && isset($_POST['modifier'])) {
     try {
-        $etudiantModel = new Model('etudiants');
+        $etudiantModel = new Model('etudiants', 'id');
         
         // Nettoyage des données saisies
         $nom = Security::cleanInput($_POST['nom']);
@@ -76,7 +76,7 @@ if ($_POST && isset($_POST['modifier'])) {
 
 // Chargement des données de l'étudiant à modifier
 try {
-    $etudiantModel = new Model('etudiants');
+    $etudiantModel = new Model('etudiants', 'id');
     $etudiant = $etudiantModel->read($id);
     
     if (empty($etudiant)) {
@@ -89,7 +89,7 @@ try {
 
 // Chargement des filières pour la liste déroulante
 try {
-    $filiereModel = new Model('filieres');
+    $filiereModel = new Model('filieres', 'id');
     $filieres = $filiereModel->read();
 } catch (Exception $e) {
     $filieres = [];

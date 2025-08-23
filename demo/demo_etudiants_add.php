@@ -23,7 +23,7 @@ $formData = [];
 // Traitement de la soumission du formulaire
 if ($_POST && isset($_POST['ajouter'])) {
     try {
-        $etudiantModel = new Model('etudiants');
+        $etudiantModel = new Model('etudiants', 'id');
         
         // Nettoyage des données saisies
         $nom = Security::cleanInput($_POST['nom']);
@@ -73,7 +73,7 @@ if ($_POST && isset($_POST['ajouter'])) {
 
 // Chargement des filières pour la liste déroulante
 try {
-    $filiereModel = new Model('filieres');
+    $filiereModel = new Model('filieres', 'id');
     $filieres = $filiereModel->read();
 } catch (Exception $e) {
     $filieres = [];

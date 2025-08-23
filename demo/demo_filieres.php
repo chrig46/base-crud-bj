@@ -22,7 +22,7 @@ $message = '';
 // Traitement des actions CRUD
 if ($_POST) {
     try {
-        $filiereModel = new Model('filieres');
+        $filiereModel = new Model('filieres', 'id');
         
         // Ajout d'une filière
         if (isset($_POST['ajouter'])) {
@@ -87,7 +87,7 @@ if ($_POST) {
 
 // Chargement des filières
 try {
-    $filiereModel = new Model('filieres');
+    $filiereModel = new Model('filieres', 'id');
     $filieres = $filiereModel->read();
 } catch (Exception $e) {
     $filieres = [];
