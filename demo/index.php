@@ -32,7 +32,7 @@ try {
     $message = Alert::success("✅ Connexion à la base de données réussie !");
     
 } catch (Exception $e) {
-    $message = Alert::error("❌ Erreur de connexion : Exécutez d'abord le script demo_setup.sql");
+    $message = Alert::error("❌ Erreur de connexion : Exécutez d'abord le script setup.sql");
 }
 
 ?>
@@ -68,7 +68,7 @@ try {
                         <p class="card-text text-muted mb-2">Pages séparées avec CRUD complet et relations</p>
                         <p class="card-text"><strong><?= $stats['etudiants'] ?></strong> étudiant(s) inscrit(s)</p>
                         <div class="d-grid">
-                            <a href="demo_etudiants_list.php" class="btn btn-success btn-sm">Tester</a>
+                            <a href="etudiants_list.php" class="btn btn-success btn-sm">Tester</a>
                         </div>
                     </div>
                 </div>
@@ -82,7 +82,7 @@ try {
                         <p class="card-text text-muted mb-2">Modals Bootstrap sur une seule page</p>
                         <p class="card-text"><strong><?= $stats['filieres'] ?></strong> filière(s) disponible(s)</p>
                         <div class="d-grid">
-                            <a href="demo_filieres.php" class="btn btn-success btn-sm">Tester</a>
+                            <a href="filieres.php" class="btn btn-success btn-sm">Tester</a>
                         </div>
                     </div>
                 </div>

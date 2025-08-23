@@ -54,7 +54,7 @@
 
         <div class="d-flex gap-2">
             <a href="index.php" class="btn btn-outline-secondary">Retour à l'accueil</a>
-            <a href="demo/demo.php" class="btn btn-dark">Voir la démo POO</a>
+            <a href="demo/index.php" class="btn btn-dark">Voir la démo POO</a>
         </div>
     </div>
 

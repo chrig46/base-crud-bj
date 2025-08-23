@@ -24,7 +24,7 @@ base-crud-bj/
 │   └── Security.php       # Fonctions de sécurité
 ├── demo/                  # Démonstration complète
 │   ├── demo.php           # Page d'accueil de la démo
-│   ├── demo_setup.sql     # Script SQL avec données d'exemple
+│   ├── setup.sql     # Script SQL avec données d'exemple
 │   ├── demo_etudiants_*.php # Gestion des étudiants
 │   └── demo_filieres.php  # Gestion des filières
 ├── config/                # Configuration

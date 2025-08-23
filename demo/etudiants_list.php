@@ -71,9 +71,9 @@ try {
         
         <!-- Navigation -->
         <div class="btn-group my-4" role="group">
-            <a href="demo.php" class="btn btn-outline-secondary">Accueil</a>
-            <a href="demo_etudiants_add.php" class="btn btn-outline-secondary">Ajouter étudiant</a>
-            <a href="demo_filieres.php" class="btn btn-outline-secondary">Gestion filières</a>
+            <a href="index.php" class="btn btn-outline-secondary">Accueil</a>
+            <a href="etudiants_add.php" class="btn btn-outline-secondary">Ajouter étudiant</a>
+            <a href="filieres.php" class="btn btn-outline-secondary">Gestion filières</a>
         </div>
         
         <!-- Messages -->
@@ -106,7 +106,7 @@ try {
                         <td><?= $etudiant['sexe'] ? ($etudiant['sexe'] == 'M' ? 'M' : 'F') : '-' ?></td>
                         <td><?= Security::escape($etudiant['filiere_nom']) ?></td>
                         <td>
-                            <a href="demo_etudiants_edit.php?id=<?= $etudiant['id'] ?>" class="btn btn-sm btn-warning">Modifier</a>
+                            <a href="etudiants_edit.php?id=<?= $etudiant['id'] ?>" class="btn btn-sm btn-warning">Modifier</a>
                             <form method="POST" style="display: inline;" onsubmit="return confirm('Supprimer cet étudiant ?')">
                                 <input type="hidden" name="id" value="<?= $etudiant['id'] ?>">
                                 <button type="submit" name="supprimer" class="btn btn-sm btn-danger">Supprimer</button>

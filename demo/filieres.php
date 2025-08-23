@@ -109,9 +109,9 @@ try {
         
         <!-- Navigation -->
         <div class="btn-group my-4" role="group">
-            <a href="demo.php" class="btn btn-outline-secondary">Accueil</a>
-            <a href="demo_etudiants_list.php" class="btn btn-outline-secondary">Liste étudiants</a>
-            <a href="demo_etudiants_add.php" class="btn btn-outline-secondary">Ajouter étudiant</a>
+            <a href="index.php" class="btn btn-outline-secondary">Accueil</a>
+            <a href="etudiants_list.php" class="btn btn-outline-secondary">Liste étudiants</a>
+            <a href="etudiants_add.php" class="btn btn-outline-secondary">Ajouter étudiant</a>
         </div>
         
         <!-- Messages -->
