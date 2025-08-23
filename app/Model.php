@@ -12,7 +12,7 @@ use Exception;
  * centralisée de Database. Le nom de la table et la clé primaire sont configurables.
  *
  * Utilisation :
- * $userModel = new Model('users');
+ * $userModel = new Model('users', 'id');
  * $userModel->create(['nom' => 'Jean']);
  * $users = $userModel->read();
  *
@@ -26,16 +26,16 @@ class Model
     /** @var string Nom de la table */
     private string $table;
     /** @var string Nom de la clé primaire */
-    private string $primaryKey = 'id';
+    private string $primaryKey;
 
     /**
      * Constructeur du modèle générique
      *
      * @param string $table Nom de la table
-     * @param string $primaryKey Nom de la clé primaire (par défaut 'id')
+     * @param string $primaryKey Nom de la clé primaire (obligatoire)
      * @throws Exception
      */
-    public function __construct(string $table, string $primaryKey = 'id')
+    public function __construct(string $table, string $primaryKey)
     {
         $this->table = $table;
         $this->primaryKey = $primaryKey;
@@ -69,9 +69,9 @@ class Model
     public function read(int $id = null, string $orderBy = null): array
     {
         if ($id) {
-            $sql = "SELECT * FROM {$this->table} WHERE {$this->primaryKey} = :id";
+            $sql = "SELECT * FROM {$this->table} WHERE {$this->primaryKey} = :{$this->primaryKey}";
             $statement = self::$pdo->prepare($sql);
-            $statement->execute(['id' => $id]);
+            $statement->execute([$this->primaryKey => $id]);
             return $statement->fetch() ?: [];
         } else {
             // Ordre par défaut : plus récents en premier
@@ -95,9 +95,9 @@ class Model
             $fields .= "{$field} = :{$field}, ";
         }
         $fields = rtrim($fields, ", ");
-        $sql = "UPDATE {$this->table} SET {$fields} WHERE {$this->primaryKey} = :id";
+        $sql = "UPDATE {$this->table} SET {$fields} WHERE {$this->primaryKey} = :{$this->primaryKey}";
         $statement = self::$pdo->prepare($sql);
-        $data["id"] = $id;
+        $data[$this->primaryKey] = $id;
         return $statement->execute($data);
     }
 
@@ -109,9 +109,9 @@ class Model
      */
     public function delete(int $id): bool
     {
-        $sql = "DELETE FROM {$this->table} WHERE {$this->primaryKey} = :id";
+        $sql = "DELETE FROM {$this->table} WHERE {$this->primaryKey} = :{$this->primaryKey}";
         $statement = self::$pdo->prepare($sql);
-        return $statement->execute(['id' => $id]);
+        return $statement->execute([$this->primaryKey => $id]);
     }
 
     /**
