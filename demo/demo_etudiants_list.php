@@ -22,7 +22,7 @@ $message = '';
 // Traitement de la suppression d'un étudiant
 if ($_POST && isset($_POST['supprimer'])) {
     try {
-        $etudiantModel = new Model('etudiants');
+        $etudiantModel = new Model('etudiants', 'id');
         $id = (int)$_POST['id'];
         
         if ($id > 0) {
@@ -40,7 +40,7 @@ if ($_POST && isset($_POST['supprimer'])) {
 
 // Chargement des étudiants avec jointure filières
 try {
-    $etudiantModel = new Model('etudiants');
+    $etudiantModel = new Model('etudiants', 'id');
     
     // Requête avec JOIN pour récupérer les noms des filières
     $sql = "SELECT e.id, e.nom, e.prenom, e.email, e.age, e.sexe, e.created_at, 
@@ -82,7 +82,6 @@ try {
         <!-- Compteur -->
         <p class="mt-4"><strong><?= count($etudiants) ?></strong> étudiant(s) inscrit(s)</p>
         
-        <?php if (!empty($etudiants)): ?>
         <table class="table table-striped">
             <thead class="table-dark">
                 <tr>
@@ -97,31 +96,33 @@ try {
             </thead>
 
             <tbody>
-                <?php foreach ($etudiants as $etudiant): ?>
-                <tr>
-                    <td><strong><?= Security::escape($etudiant['id']) ?></strong></td>
-                    <td><?= Security::escape($etudiant['nom']) ?></td>
-                    <td><?= Security::escape($etudiant['prenom']) ?></td>
-                    <td><?= Security::escape($etudiant['email']) ?></td>
-                    <td><?= $etudiant['sexe'] ? ($etudiant['sexe'] == 'M' ? 'M' : 'F') : '-' ?></td>
-                    <td><?= Security::escape($etudiant['filiere_nom']) ?></td>
-                    <td>
-                        <a href="demo_etudiants_edit.php?id=<?= $etudiant['id'] ?>" class="btn btn-sm btn-warning">Modifier</a>
-                        <form method="POST" style="display: inline;" onsubmit="return confirm('Supprimer cet étudiant ?')">
-                            <input type="hidden" name="id" value="<?= $etudiant['id'] ?>">
-                            <button type="submit" name="supprimer" class="btn btn-sm btn-danger">Supprimer</button>
-                        </form>
-                    </td>
-                </tr>
-                <?php endforeach; ?>
+                <?php if (!empty($etudiants)): ?>
+                    <?php foreach ($etudiants as $etudiant): ?>
+                    <tr>
+                        <td><strong><?= Security::escape($etudiant['id']) ?></strong></td>
+                        <td><?= Security::escape($etudiant['nom']) ?></td>
+                        <td><?= Security::escape($etudiant['prenom']) ?></td>
+                        <td><?= Security::escape($etudiant['email']) ?></td>
+                        <td><?= $etudiant['sexe'] ? ($etudiant['sexe'] == 'M' ? 'M' : 'F') : '-' ?></td>
+                        <td><?= Security::escape($etudiant['filiere_nom']) ?></td>
+                        <td>
+                            <a href="demo_etudiants_edit.php?id=<?= $etudiant['id'] ?>" class="btn btn-sm btn-warning">Modifier</a>
+                            <form method="POST" style="display: inline;" onsubmit="return confirm('Supprimer cet étudiant ?')">
+                                <input type="hidden" name="id" value="<?= $etudiant['id'] ?>">
+                                <button type="submit" name="supprimer" class="btn btn-sm btn-danger">Supprimer</button>
+                            </form>
+                        </td>
+                    </tr>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <tr>
+                        <td colspan="7" class="text-center text-muted py-4">
+                            <em>Aucun étudiant inscrit.</em>
+                        </td>
+                    </tr>
+                <?php endif; ?>
             </tbody>
         </table>
-                    
-        <?php else: ?>
-            <div class="alert alert-info">
-                Aucun étudiant inscrit. <a href="demo_etudiants_add.php">Ajouter le premier étudiant</a>
-            </div>
-        <?php endif; ?>
         
         <!-- Note technique -->
         <div class="alert alert-info mt-4">
