@@ -1,9 +1,9 @@
 <?php
 /**
- * Page de liste des étudiants
+ * Page de liste d'enregistrements
  * 
- * Affiche la liste des étudiants avec leurs filières
- * via une jointure SQL et permet les actions CRUD
+ * Affiche la liste des enregistrements avec leurs relations
+ * via jointure SQL et permet les actions CRUD
  */
 
 // Chargement des classes nécessaires
@@ -19,7 +19,7 @@ use App\Alert;
 
 $message = '';
 
-// Traitement de la suppression d'un étudiant
+// Traitement de la suppression d'un enregistrement
 if ($_POST && isset($_POST['supprimer'])) {
     try {
         $etudiantModel = new Model('etudiants', 'id');
@@ -28,7 +28,7 @@ if ($_POST && isset($_POST['supprimer'])) {
         if ($id > 0) {
             $success = $etudiantModel->delete($id);
             if ($success) {
-                $message = Alert::success("Étudiant supprimé avec succès !");
+                $message = Alert::success("Enregistrement supprimé avec succès !");
             } else {
                 $message = Alert::error("Erreur lors de la suppression");
             }
@@ -38,11 +38,11 @@ if ($_POST && isset($_POST['supprimer'])) {
     }
 }
 
-// Chargement des étudiants avec jointure filières
+// Chargement des enregistrements avec jointure
 try {
     $etudiantModel = new Model('etudiants', 'id');
     
-    // Requête avec JOIN pour récupérer les noms des filières
+    // Requête avec JOIN pour récupérer les relations
     $sql = "SELECT e.id, e.nom, e.prenom, e.email, e.age, e.sexe, e.created_at, 
                    f.nom as filiere_nom, f.id as filiere_id
             FROM etudiants e 
@@ -80,7 +80,7 @@ try {
         <?= $message ?>
         
         <!-- Compteur -->
-        <p class="mt-4"><strong><?= count($etudiants) ?></strong> étudiant(s) inscrit(s)</p>
+        <p class="mt-4"><strong><?= count($etudiants) ?></strong> enregistrement(s)</p>
         
         <table class="table table-striped">
             <thead class="table-dark">
@@ -107,7 +107,7 @@ try {
                         <td><?= Security::escape($etudiant['filiere_nom']) ?></td>
                         <td>
                             <a href="etudiants_edit.php?id=<?= $etudiant['id'] ?>" class="btn btn-sm btn-warning">Modifier</a>
-                            <form method="POST" style="display: inline;" onsubmit="return confirm('Supprimer cet étudiant ?')">
+                            <form method="POST" style="display: inline;" onsubmit="return confirm('Supprimer cet enregistrement ?')">
                                 <input type="hidden" name="id" value="<?= $etudiant['id'] ?>">
                                 <button type="submit" name="supprimer" class="btn btn-sm btn-danger">Supprimer</button>
                             </form>
@@ -117,7 +117,7 @@ try {
                 <?php else: ?>
                     <tr>
                         <td colspan="7" class="text-center text-muted py-4">
-                            <em>Aucun étudiant inscrit.</em>
+                            <em>Aucun enregistrement trouvé.</em>
                         </td>
                     </tr>
                 <?php endif; ?>

@@ -1,9 +1,9 @@
 <?php
 /**
- * Page d'ajout d'un étudiant
+ * Page d'ajout d'enregistrement
  * 
- * Permet d'ajouter un nouvel étudiant avec sélection de filière
- * et validation des données saisies
+ * Formulaire générique avec validation des données,
+ * gestion des relations et feedback utilisateur
  */
 
 // Chargement des classes nécessaires
@@ -43,7 +43,7 @@ if ($_POST && isset($_POST['ajouter'])) {
         if ($filiere_id <= 0) $errors[] = "Veuillez sélectionner une filière";
         
         if (empty($errors)) {
-            // Création de l'étudiant en base
+            // Création de l'enregistrement en base
             $success = $etudiantModel->create([
                 'nom' => $nom,
                 'prenom' => $prenom,
@@ -54,10 +54,10 @@ if ($_POST && isset($_POST['ajouter'])) {
             ]);
             
             if ($success) {
-                $message = Alert::success("Étudiant {$prenom} {$nom} ajouté avec succès !");
+                $message = Alert::success("Enregistrement ajouté avec succès !");
                 $formData = []; // Vider le formulaire
             } else {
-                $message = Alert::error("Erreur lors de l'ajout (email peut-être déjà utilisé)");
+                $message = Alert::error("Erreur lors de l'ajout");
                 $formData = $_POST;
             }
         } else {
@@ -71,7 +71,7 @@ if ($_POST && isset($_POST['ajouter'])) {
     }
 }
 
-// Chargement des filières pour la liste déroulante
+// Chargement des données pour les listes déroulantes
 try {
     $filiereModel = new Model('filieres', 'id');
     $filieres = $filiereModel->read();
@@ -106,7 +106,7 @@ try {
         <form method="POST" class="mt-4">
                 <div class="mb-3">
                     <label for="nom" class="form-label">Nom *</label>
-                    <input type="text" class="form-control" id="nom" name="nom" 
+                    <input type="text" class="form-control" id="nom" name="nom"
                            value="<?= Security::escape($formData['nom'] ?? '') ?>" required>
                 </div>
                 
@@ -151,7 +151,7 @@ try {
                 </div>
                 
                 <div class="mb-3">
-                    <button type="submit" name="ajouter" class="btn btn-success">Ajouter l'étudiant</button>
+                    <button type="submit" name="ajouter" class="btn btn-success">Ajouter</button>
                     <button type="reset" class="btn btn-outline-danger">Effacer</button>
                 </div>
         </form>

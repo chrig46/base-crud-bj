@@ -1,8 +1,8 @@
 <?php
 /**
- * Page de gestion des filières
+ * Page de gestion d'enregistrements
  * 
- * Gestion complète des filières avec modals Bootstrap
+ * Gestion complète avec modals Bootstrap
  * et opérations CRUD sur une seule page
  */
 
@@ -24,7 +24,7 @@ if ($_POST) {
     try {
         $filiereModel = new Model('filieres', 'id');
         
-        // Ajout d'une filière
+        // Ajout d'un enregistrement
         if (isset($_POST['ajouter'])) {
             $nom = Security::cleanInput($_POST['nom']);
             $description = Security::cleanInput($_POST['description']);
@@ -36,16 +36,16 @@ if ($_POST) {
                 ]);
                 
                 if ($success) {
-                    $message = Alert::success("Filière '{$nom}' ajoutée avec succès !");
+                    $message = Alert::success("Enregistrement ajouté avec succès !");
                 } else {
-                    $message = Alert::error("Erreur lors de l'ajout de la filière");
+                    $message = Alert::error("Erreur lors de l'ajout");
                 }
             } else {
-                $message = Alert::warning("Le nom de la filière est obligatoire");
+                $message = Alert::warning("Le nom est obligatoire");
             }
         }
         
-        // Modification d'une filière
+        // Modification d'un enregistrement
         if (isset($_POST['modifier'])) {
             $id = (int)$_POST['id'];
             $nom = Security::cleanInput($_POST['nom']);
@@ -58,7 +58,7 @@ if ($_POST) {
                 ]);
                 
                 if ($success) {
-                    $message = Alert::success("Filière '{$nom}' modifiée avec succès !");
+                    $message = Alert::success("Enregistrement modifié avec succès !");
                 } else {
                     $message = Alert::error("Erreur lors de la modification");
                 }
@@ -67,13 +67,13 @@ if ($_POST) {
             }
         }
         
-        // Suppression d'une filière
+        // Suppression d'un enregistrement
         if (isset($_POST['supprimer'])) {
             $id = (int)$_POST['id'];
             if ($id > 0) {
                 $success = $filiereModel->delete($id);
                 if ($success) {
-                    $message = Alert::success("Filière supprimée avec succès !");
+                    $message = Alert::success("Enregistrement supprimé avec succès !");
                 } else {
                     $message = Alert::error("Erreur lors de la suppression");
                 }
@@ -119,9 +119,9 @@ try {
         
         <!-- Bouton d'ajout et compteur -->
         <div class="d-flex justify-content-between align-items-center mt-4 mb-3">
-            <p class="mb-0"><strong><?= count($filieres) ?></strong> filière(s) disponible(s)</p>
+            <p class="mb-0"><strong><?= count($filieres) ?></strong> enregistrement(s)</p>
             <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#ajouterModal">
-                Ajouter une filière
+                Ajouter
             </button>
         </div>
         
@@ -158,7 +158,7 @@ try {
         </table>
         <?php else: ?>
             <div class="alert alert-info mt-4">
-                Aucune filière trouvée. <button type="button" class="btn btn-link p-0" data-bs-toggle="modal" data-bs-target="#ajouterModal">Ajouter la première filière</button>
+                Aucun enregistrement trouvé. <button type="button" class="btn btn-link p-0" data-bs-toggle="modal" data-bs-target="#ajouterModal">Ajouter le premier</button>
             </div>
         <?php endif; ?>
         
@@ -173,13 +173,13 @@ try {
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Ajouter une filière</h5>
+                    <h5 class="modal-title">Ajouter</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <form method="POST">
                     <div class="modal-body">
                         <div class="mb-3">
-                            <label for="ajout_nom" class="form-label">Nom de la filière *</label>
+                            <label for="ajout_nom" class="form-label">Nom *</label>
                             <input type="text" class="form-control" id="ajout_nom" name="nom" required>
                         </div>
                         <div class="mb-3">
@@ -201,14 +201,14 @@ try {
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Modifier la filière</h5>
+                    <h5 class="modal-title">Modifier</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <form method="POST">
                     <div class="modal-body">
                         <input type="hidden" id="modif_id" name="id">
                         <div class="mb-3">
-                            <label for="modif_nom" class="form-label">Nom de la filière *</label>
+                            <label for="modif_nom" class="form-label">Nom *</label>
                             <input type="text" class="form-control" id="modif_nom" name="nom" required>
                         </div>
                         <div class="mb-3">
@@ -230,13 +230,13 @@ try {
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Supprimer la filière</h5>
+                    <h5 class="modal-title">Supprimer</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <form method="POST">
                     <div class="modal-body">
                         <input type="hidden" id="suppr_id" name="id">
-                        <p>Êtes-vous sûr de vouloir supprimer la filière <strong id="suppr_nom"></strong> ?</p>
+                        <p>Êtes-vous sûr de vouloir supprimer <strong id="suppr_nom"></strong> ?</p>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Annuler</button>
@@ -249,7 +249,7 @@ try {
     
     <script src="../bootstrap-5.3.7-dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Fonction pour modifier une filière
+        // Fonction pour modifier un enregistrement
         function modifierFiliere(id, nom, description) {
             document.getElementById('modif_id').value = id;
             document.getElementById('modif_nom').value = nom;
@@ -259,7 +259,7 @@ try {
             modal.show();
         }
         
-        // Fonction pour supprimer une filière
+        // Fonction pour supprimer un enregistrement
         function supprimerFiliere(id, nom) {
             document.getElementById('suppr_id').value = id;
             document.getElementById('suppr_nom').textContent = nom;

@@ -1,8 +1,8 @@
 <?php
 /**
- * Page de modification d'un étudiant
+ * Page de modification d'enregistrement
  * 
- * Permet de modifier les données d'un étudiant existant
+ * Permet de modifier les données d'un enregistrement existant
  * avec pré-remplissage du formulaire et validation
  */
 
@@ -21,7 +21,7 @@ $message = '';
 $etudiant = [];
 $filieres = [];
 
-// Vérification de l'ID étudiant
+// Vérification de l'ID
 $id = (int)($_GET['id'] ?? 0);
 if ($id <= 0) {
     header('Location: etudiants_list.php');
@@ -50,7 +50,7 @@ if ($_POST && isset($_POST['modifier'])) {
         if ($filiere_id <= 0) $errors[] = "Veuillez sélectionner une filière";
         
         if (empty($errors)) {
-            // Mise à jour des données en base
+            // Mise à jour de l'enregistrement en base
             $success = $etudiantModel->update($id, [
                 'nom' => $nom,
                 'prenom' => $prenom,
@@ -61,9 +61,9 @@ if ($_POST && isset($_POST['modifier'])) {
             ]);
             
             if ($success) {
-                $message = Alert::success("Étudiant {$prenom} {$nom} modifié avec succès !");
+                $message = Alert::success("Enregistrement modifié avec succès !");
             } else {
-                $message = Alert::error("Erreur lors de la modification (email peut-être déjà utilisé)");
+                $message = Alert::error("Erreur lors de la modification");
             }
         } else {
             $message = Alert::warning("Erreurs : " . implode(', ', $errors));
@@ -74,7 +74,7 @@ if ($_POST && isset($_POST['modifier'])) {
     }
 }
 
-// Chargement des données de l'étudiant à modifier
+// Chargement des données de l'enregistrement à modifier
 try {
     $etudiantModel = new Model('etudiants', 'id');
     $etudiant = $etudiantModel->read($id);
@@ -87,7 +87,7 @@ try {
     $message = Alert::error('Erreur lors du chargement : ' . $e->getMessage());
 }
 
-// Chargement des filières pour la liste déroulante
+// Chargement des options pour la liste déroulante
 try {
     $filiereModel = new Model('filieres', 'id');
     $filieres = $filiereModel->read();
@@ -101,7 +101,7 @@ try {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Demo - Modifier un Étudiant</title>
+    <title>Demo - Modifier un étudiant</title>
     <link href="../bootstrap-5.3.7-dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
@@ -167,13 +167,13 @@ try {
                 </div>
                 
                 <div class="mb-3">
-                    <button type="submit" name="modifier" class="btn btn-warning">Modifier l'étudiant</button>
+                    <button type="submit" name="modifier" class="btn btn-warning">Modifier</button>
                 </div>
         </form>
         
         <?php else: ?>
         <div class="alert alert-danger">
-            Étudiant non trouvé ou erreur de chargement.
+            Enregistrement non trouvé ou erreur de chargement.
         </div>
         <?php endif; ?>
     </div>
