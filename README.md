@@ -4,11 +4,11 @@ Bibliothèque PHP éducative et open source développée pour accélérer le dé
 
 **Note :** La version actuelle est écrite uniquement en programmation orientée objet. Une version procédurale est prévue. Toute contribution est la bienvenue.
 
-## Configuration
+## Quickstart
 
 **Prérequis :** PHP 8.0+, MySQL/MariaDB et un serveur web
 
-### Configuration de la base de données
+### 1. Configuration de la base de données
 
 Configurez la connexion dans `config/database.php` :
 ```php
@@ -22,7 +22,7 @@ return [
 ];
 ```
 
-### Configuration des uploads
+### 2. Configuration des uploads (optionnel)
 
 Modifiez `config/upload.php` si nécessaire :
 ```php
@@ -32,6 +32,37 @@ return [
     'max_size' => 2 * 1024 * 1024 // 2 Mo
 ];
 ```
+
+### 3. Personnaliser votre environnement
+- **Supprimez librement** les fichiers/dossiers non nécessaires : `demo/`, `index2.php`, `upload.php`
+- **Créez votre dossier projet** dans la racine : `mon-projet/`, `gestion-stock/`, etc.
+- **Gardez** : `app/`, `config/`, `bootstrap-5.3.7-dist/`, `uploads/`
+- **Configurez `index.php`** : Modifiez la variable `$PROJET_ACTUEL` pour pointer vers votre projet
+
+### 4. Commencer votre projet
+
+**Créez votre dossier et fichier principal :**
+```php
+<?php
+// Dans votre nouveau fichier (ex: mon-projet/index.php)
+require_once '../app/Database.php';
+require_once '../app/Model.php';
+require_once '../app/Security.php';
+
+use App\Database;
+use App\Model;
+use App\Security;
+
+// Votre code ici...
+```
+
+**Configurez la redirection dans `index.php` (racine) :**
+```php
+// Modifiez cette ligne pour pointer vers votre projet
+$PROJET_ACTUEL = 'mon-projet/';  // ou 'gestion-stock/' etc.
+```
+
+Ainsi, `http://localhost/base-crud-bj/` redirigera automatiquement vers votre projet !
 
 ## Utilisation
 
