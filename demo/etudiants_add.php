@@ -103,12 +103,6 @@ try {
         <!-- Messages -->
         <?= $message ?>
         
-        <?php if (empty($filieres)): ?>
-            <div class="alert alert-warning mt-4">
-                <strong>Attention :</strong> Aucune filière trouvée. 
-                <a href="filieres.php">Créez d'abord des filières</a> avant d'ajouter des étudiants.
-            </div>
-        <?php else: ?>
         <form method="POST" class="mt-4">
                 <div class="mb-3">
                     <label for="nom" class="form-label">Nom *</label>
@@ -161,8 +155,6 @@ try {
                     <button type="reset" class="btn btn-outline-danger">Effacer</button>
                 </div>
         </form>
-        
-        <?php endif; ?>
         
         <!-- Note technique -->
         <div class="alert alert-info mt-4">
