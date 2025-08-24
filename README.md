@@ -1,70 +1,30 @@
-# Base CRUD BJ
+# BASE CRUD BJ
 
-> **Projet de révision PHP** - Bibliothèque d'outils pour les examens de programmation web
+Bibliothèque PHP éducative et open source développée pour accélérer le développement lors des examens pratiques de programmation web au Bénin. Il inclut la plupart des fonctionnalités qui reviennent chaque année. Ce n'est pas un framework. Cependant, l'objectif est aussi de permettre au candidat de se concentrer sur le processus métier de son application.
 
-## Description
+**Note :** La version actuelle est écrite uniquement en programmation orientée objet. Une version procédurale est prévue. Toute contribution est la bienvenue.
 
-Base CRUD BJ est une bibliothèque PHP éducative développée dans le contexte académique béninois, conçue pour accélérer le développement lors des examens de programmation web. Il couvre les paradigmes orienté objet et procédural, offrant des fonctionnalités courantes : CRUD, sécurité, gestion de fichiers et interface utilisateur.
+## Configuration
 
-Adapté aux contraintes des examens universitaires au Bénin, ce projet se concentre sur l'essentiel pour réussir rapidement les exercices pratiques PHP, que ce soit en OOP ou en procédural.
+**Prérequis :** PHP 8.0+, MySQL/MariaDB et un serveur web
 
-**Note :** La version procédurale est actuellement en cours de développement et sera disponible prochainement.
+### Configuration de la base de données
 
-## Structure du Projet
-
-```
-base-crud-bj/
-├── app/                    # Classes OOP principales
-│   ├── Alert.php          # Génération d'alertes Bootstrap
-│   ├── Config.php         # Gestionnaire de configuration
-│   ├── Database.php       # Connexion base de données (Singleton)
-│   ├── FileManager.php    # Gestion de fichiers sécurisée
-│   ├── Messages.php       # Messages centralisés
-│   ├── Model.php          # Modèle CRUD générique
-│   └── Security.php       # Fonctions de sécurité
-├── demo/                  # Démonstration complète
-│   ├── demo.php           # Page d'accueil de la démo
-│   ├── setup.sql     # Script SQL avec données d'exemple
-│   ├── demo_etudiants_*.php # Gestion des étudiants
-│   └── demo_filieres.php  # Gestion des filières
-├── config/                # Configuration
-│   ├── database.php       # Configuration base de données
-│   └── upload.php         # Configuration upload de fichiers
-├── uploads/               # Dossier de stockage des fichiers
-├── index.php             # Point d'entrée principal
-├── upload.php            # Page de gestion des fichiers
-└── README.md             # Cette documentation
-```
-
-## Installation et Configuration
-
-### Prérequis
-- **PHP 8.0+**
-- **MySQL/MariaDB** 
-- **Serveur web** (Apache, Nginx, ou serveur intégré PHP)
-
-### Configuration Base de Données
-
-1. **Créer une base de données MySQL** :
-```sql
-CREATE DATABASE test CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-```
-
-2. **Configurer la connexion** dans `config/database.php` :
+Configurez la connexion dans `config/database.php` :
 ```php
 return [
     'hostname' => 'localhost',
     'username' => 'root',
     'password' => '',
     'dbname' => 'test',
-    'port' => '3307',
+    'port' => '3307',    // ou 3306
     'charset' => 'utf8'
 ];
 ```
 
-### Configuration Upload
+### Configuration des uploads
 
-Modifiez `config/upload.php` selon vos besoins :
+Modifiez `config/upload.php` si nécessaire :
 ```php
 return [
     'directory' => __DIR__ . '/../uploads',
@@ -74,8 +34,6 @@ return [
 ```
 
 ## Utilisation
-
-### Utilisation des Classes
 
 ```php
 <?php
@@ -87,11 +45,8 @@ use App\Database;
 use App\Model;
 use App\Security;
 
-// Connexion à la base de données
-$pdo = Database::connectTo();
-
-// Modèle utilisateur
-$userModel = new Model('users');
+// Modèle utilisateur (table 'users' avec clé primaire 'id')
+$userModel = new Model('users', 'id');
 
 // Créer un utilisateur
 $userData = [
@@ -103,36 +58,37 @@ $userModel->create($userData);
 // Lire tous les utilisateurs
 $users = $userModel->read();
 
-// Fermer la connexion
-Database::disconnect();
+// Lire un utilisateur spécifique
+$user = $userModel->read(1);
+
+// Modifier un utilisateur
+$userModel->update(1, ['nom' => 'Nouveau nom']);
+
+// Supprimer un utilisateur
+$userModel->delete(1);
 ```
 
 ## Fonctionnalités
 
-- **CRUD générique** - Opérations sur toute table avec le modèle Model
-- **Connexion sécurisée** - PDO avec pattern Singleton et requêtes préparées
-- **Sécurité** - Protection XSS, validation des données, hachage des mots de passe
-- **Upload de fichiers** - Gestion sécurisée avec validation d'extensions et taille
-- **Interface utilisateur** - Alertes Bootstrap et messages centralisés
-- **Configuration** - Paramètres centralisés pour base de données et uploads
+- CRUD complet (Create, Read, Update, Delete)
+  - Opérations automatiques sur toute table
+  - Requêtes SQL personnalisees et sécurisées
+- Sécurité et validation des données
+  - Protection contre les attaques XSS
+  - Nettoyage automatique des entrées utilisateur
+  - Validation des champs obligatoires
+  - Hachage sécurisé des mots de passe
+- Configuration de la base de données et d'upload de fichiers
+  - Paramètres centralisés dans config/
+  - Validation des extensions et tailles de fichiers
+- Interface utilisateur Bootstrap
+  - Messages de succès, erreur et avertissement
+  - Design responsive et moderne
+- Fonctions utilitaires (Helper)
+  - Formatage de données (tailles, dates, texte)
+  - Génération de tokens et validation d'emails
+  - Création de slugs et troncature de texte
 
-## Usage Éducatif et Examens
+---
 
-**Base CRUD BJ** est spécifiquement conçu comme outil d'apprentissage et de révision pour les examens de programmation PHP dans le contexte académique béninois.
-
-### Utilisation autorisée en examen
-- ✅ **Ressource locale** - Peut être utilisé hors ligne sur votre PC personnel
-- ✅ **Code source personnel** - Développé comme outil d'étude individuel
-- ✅ **Documentation intégrée** - Commentaires et exemples inclus
-- ✅ **Adaptation libre** - Modifiable selon les besoins de l'exercice
-
-### Responsabilité de l'utilisateur
-- Vérifier les règles spécifiques de votre institution
-- S'assurer de la conformité avec le règlement d'examen
-- Utiliser comme base d'apprentissage, non comme solution finale
-
-**Disclaimer :** L'auteur n'est pas responsable de l'usage fait de cet outil. Chaque utilisateur doit s'assurer de respecter les règles de son institution académique.
-
-## Auteur
-
-**Chrigene Vodounon** - Version 1.0
+**Outil pédagogique open source** - Respectez les règles de votre institution
