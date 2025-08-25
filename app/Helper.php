@@ -44,24 +44,6 @@ class Helper
         return '0 bytes';
     }
 
-    /**
-     * Convertit une chaîne en slug (URL-friendly)
-     *
-     * @param string $text Texte à convertir
-     * @return string Slug généré
-     */
-    public static function slugify(string $text): string
-    {
-        // Remplacer les caractères spéciaux
-        $text = iconv('UTF-8', 'ASCII//TRANSLIT', $text);
-        
-        // Nettoyer et convertir
-        $text = preg_replace('/[^a-zA-Z0-9\-_]/', '-', $text);
-        $text = preg_replace('/-+/', '-', $text);
-        $text = trim($text, '-');
-        
-        return strtolower($text);
-    }
 
     /**
      * Tronque un texte à une longueur donnée
@@ -97,36 +79,5 @@ class Helper
         }
     }
 
-    /**
-     * Génère un token aléatoire sécurisé
-     *
-     * @param int $length Longueur du token (par défaut : 32)
-     * @return string Token généré
-     */
-    public static function generateToken(int $length = 32): string
-    {
-        return bin2hex(random_bytes($length / 2));
-    }
 
-    /**
-     * Valide une adresse email
-     *
-     * @param string $email Email à valider
-     * @return bool True si l'email est valide
-     */
-    public static function isValidEmail(string $email): bool
-    {
-        return filter_var($email, FILTER_VALIDATE_EMAIL) !== false;
-    }
-
-    /**
-     * Convertit un tableau en chaîne de paramètres URL
-     *
-     * @param array $params Paramètres à convertir
-     * @return string Chaîne de paramètres (ex: "key1=value1&key2=value2")
-     */
-    public static function buildQueryString(array $params): string
-    {
-        return http_build_query($params);
-    }
 }
