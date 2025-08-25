@@ -29,48 +29,53 @@ if ($id <= 0) {
 }
 
 // Traitement de la soumission du formulaire
-if ($_POST && isset($_POST['modifier'])) {
-    try {
-        $etudiantModel = new Model('etudiants', 'id');
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+    if (isset($_POST['modifier'])) {
+        try {
+            $etudiantModel = new Model('etudiants', 'id');
         
         // Nettoyage des données saisies
         $nom = Security::cleanInput($_POST['nom']);
         $prenom = Security::cleanInput($_POST['prenom']);
         $email = Security::cleanInput($_POST['email']);
+        $sexe = Security::cleanInput($_POST['sexe']);
         $age = (int)$_POST['age'];
-        $sexe = Security::cleanInput($_POST['sexe'] ?? '');
         $filiere_id = (int)$_POST['filiere_id'];
         
-        // Validation des champs obligatoires
+        // Validation des données saisies
         $errors = [];
         if (empty($nom)) $errors[] = "Le nom est obligatoire";
         if (empty($prenom)) $errors[] = "Le prénom est obligatoire";
         if (empty($email)) $errors[] = "L'email est obligatoire";
         if (!Security::isValidEmail($email)) $errors[] = "L'email n'est pas valide";
-        if ($filiere_id <= 0) $errors[] = "Veuillez sélectionner une filière";
+        if ($age <= 0) $errors[] = "L'âge est obligatoire";
+        if (empty($sexe)) $errors[] = "Le sexe est obligatoire";
+        // if ($filiere_id <= 0) $errors[] = "Veuillez sélectionner une filière"; // Décommenter si filière obligatoire
         
-        if (empty($errors)) {
-            // Mise à jour de l'enregistrement en base
-            $success = $etudiantModel->update($id, [
-                'nom' => $nom,
-                'prenom' => $prenom,
-                'email' => $email,
-                'age' => $age > 0 ? $age : null,
-                'sexe' => !empty($sexe) ? $sexe : null,
-                'filiere_id' => $filiere_id
-            ]);
+            if (empty($errors)) {
+                // Mise à jour de l'enregistrement en base
+                $success = $etudiantModel->update($id, [
+                    'nom' => $nom,
+                    'prenom' => $prenom,
+                    'email' => $email,
+                    'sexe' => $sexe,
+                    'age' => $age,
+                    'filiere_id' => $filiere_id > 0 ? $filiere_id : null
+                ]);
             
-            if ($success) {
-                $message = Alert::success("Enregistrement modifié avec succès !");
+                if ($success) {
+                    $message = Alert::success("Enregistrement modifié avec succès !");
+                } else {
+                    $message = Alert::error("Erreur lors de la modification");
+                }
             } else {
-                $message = Alert::error("Erreur lors de la modification");
+                $message = Alert::warning("Erreurs : " . implode(', ', $errors));
             }
-        } else {
-            $message = Alert::warning("Erreurs : " . implode(', ', $errors));
+
+        } catch (Exception $e) {
+            $message = Alert::error('Erreur : ' . $e->getMessage());
         }
-        
-    } catch (Exception $e) {
-        $message = Alert::error('Erreur : ' . $e->getMessage());
     }
 }
 
@@ -139,23 +144,23 @@ try {
                 </div>
                 
                 <div class="mb-3">
-                    <label for="age" class="form-label">Âge</label>
+                    <label for="age" class="form-label">Âge *</label>
                     <input type="number" class="form-control" id="age" name="age" 
-                           min="16" max="99" value="<?= Security::escape($etudiant['age'] ?? '') ?>">
+                           min="16" max="99" value="<?= Security::escape($etudiant['age'] ?? '') ?>" required>
                 </div>
                 
                 <div class="mb-3">
-                    <label for="sexe" class="form-label">Sexe</label>
-                    <select class="form-select" id="sexe" name="sexe">
-                        <option value="">-- Non spécifié --</option>
+                    <label for="sexe" class="form-label">Sexe *</label>
+                    <select class="form-select" id="sexe" name="sexe" required>
+                        <option value="">-- Sélectionnez --</option>
                         <option value="M" <?= ($etudiant['sexe'] ?? '') == 'M' ? 'selected' : '' ?>>Masculin</option>
                         <option value="F" <?= ($etudiant['sexe'] ?? '') == 'F' ? 'selected' : '' ?>>Féminin</option>
                     </select>
                 </div>
                 
                 <div class="mb-3">
-                    <label for="filiere_id" class="form-label">Filière *</label>
-                    <select class="form-select" id="filiere_id" name="filiere_id" required>
+                    <label for="filiere_id" class="form-label">Filière</label>
+                    <select class="form-select" id="filiere_id" name="filiere_id">
                         <option value="">-- Sélectionnez une filière --</option>
                         <?php foreach ($filieres as $filiere): ?>
                             <option value="<?= $filiere['id'] ?>" 

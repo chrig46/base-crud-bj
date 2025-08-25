@@ -42,11 +42,11 @@ if ($_POST && isset($_POST['supprimer'])) {
 try {
     $etudiantModel = new Model('etudiants', 'id');
     
-    // Requête avec JOIN pour récupérer les relations
+    // Requête avec LEFT JOIN pour récupérer les relations (inclut étudiants sans filière)
     $sql = "SELECT e.id, e.nom, e.prenom, e.email, e.age, e.sexe, e.created_at, 
                    f.nom as filiere_nom, f.id as filiere_id
             FROM etudiants e 
-            JOIN filieres f ON e.filiere_id = f.id
+            LEFT JOIN filieres f ON e.filiere_id = f.id
             ORDER BY e.id DESC";
     
     $etudiants = $etudiantModel->query($sql);
@@ -104,7 +104,7 @@ try {
                         <td><?= Security::escape($etudiant['prenom']) ?></td>
                         <td><?= Security::escape($etudiant['email']) ?></td>
                         <td><?= $etudiant['sexe'] ? ($etudiant['sexe'] == 'M' ? 'M' : 'F') : '-' ?></td>
-                        <td><?= Security::escape($etudiant['filiere_nom']) ?></td>
+                        <td><?= $etudiant['filiere_nom'] ? Security::escape($etudiant['filiere_nom']) : '<em>Non spécifiée</em>' ?></td>
                         <td>
                             <a href="etudiants_edit.php?id=<?= $etudiant['id'] ?>" class="btn btn-sm btn-warning">Modifier</a>
                             <form method="POST" style="display: inline;" onsubmit="return confirm('Supprimer cet enregistrement ?')">

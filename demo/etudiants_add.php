@@ -21,53 +21,57 @@ $message = '';
 $formData = [];
 
 // Traitement de la soumission du formulaire
-if ($_POST && isset($_POST['ajouter'])) {
-    try {
-        $etudiantModel = new Model('etudiants', 'id');
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+    if (isset($_POST['ajouter'])) {
+        try {
+            $etudiantModel = new Model('etudiants', 'id');
         
         // Nettoyage des données saisies
         $nom = Security::cleanInput($_POST['nom']);
         $prenom = Security::cleanInput($_POST['prenom']);
         $email = Security::cleanInput($_POST['email']);
-        $age = (int)$_POST['age'];
         $sexe = Security::cleanInput($_POST['sexe']);
+        $age = (int)$_POST['age'];
         $filiere_id = (int)$_POST['filiere_id'];
         
-        // Validation des champs obligatoires
+        // Validation des données saisies
         $errors = [];
         if (empty($nom)) $errors[] = "Le nom est obligatoire";
         if (empty($prenom)) $errors[] = "Le prénom est obligatoire";
         if (empty($email)) $errors[] = "L'email est obligatoire";
         if (!Security::isValidEmail($email)) $errors[] = "L'email n'est pas valide";
-        if (!empty($sexe) && !in_array($sexe, ['M', 'F'])) $errors[] = "Le sexe doit être M ou F";
-        if ($filiere_id <= 0) $errors[] = "Veuillez sélectionner une filière";
+        if ($age <= 0) $errors[] = "L'âge est obligatoire";
+        if (empty($sexe)) $errors[] = "Le sexe est obligatoire";
+        // if ($filiere_id <= 0) $errors[] = "Veuillez sélectionner une filière"; // Décommenter si filière obligatoire
         
-        if (empty($errors)) {
-            // Création de l'enregistrement en base
-            $success = $etudiantModel->create([
-                'nom' => $nom,
-                'prenom' => $prenom,
-                'email' => $email,
-                'age' => $age > 0 ? $age : null,
-                'sexe' => !empty($sexe) ? $sexe : null,
-                'filiere_id' => $filiere_id
-            ]);
-            
-            if ($success) {
-                $message = Alert::success("Enregistrement ajouté avec succès !");
-                $formData = []; // Vider le formulaire
+            if (empty($errors)) {
+                // Création de l'enregistrement en base
+                $success = $etudiantModel->create([
+                    'nom' => $nom,
+                    'prenom' => $prenom,
+                    'email' => $email,
+                    'sexe' => $sexe,
+                    'age' => $age,
+                    'filiere_id' => $filiere_id > 0 ? $filiere_id : null
+                ]);
+
+                if ($success) {
+                    $message = Alert::success("Enregistrement ajouté avec succès !");
+                    $formData = []; // Vider le formulaire
+                } else {
+                    $message = Alert::error("Erreur lors de l'ajout");
+                    $formData = $_POST;
+                }
             } else {
-                $message = Alert::error("Erreur lors de l'ajout");
+                $message = Alert::warning("Erreurs : " . implode(', ', $errors));
                 $formData = $_POST;
             }
-        } else {
-            $message = Alert::warning("Erreurs : " . implode(', ', $errors));
+
+        } catch (Exception $e) {
+            $message = Alert::error('Erreur : ' . $e->getMessage());
             $formData = $_POST;
         }
-        
-    } catch (Exception $e) {
-        $message = Alert::error('Erreur : ' . $e->getMessage());
-        $formData = $_POST;
     }
 }
 
@@ -123,23 +127,23 @@ try {
                 </div>
                 
                 <div class="mb-3">
-                    <label for="age" class="form-label">Âge</label>
+                    <label for="age" class="form-label">Âge *</label>
                     <input type="number" class="form-control" id="age" name="age" 
-                           min="16" max="99" value="<?= Security::escape($formData['age'] ?? '') ?>">
+                           min="16" max="99" value="<?= Security::escape($formData['age'] ?? '') ?>" required>
                 </div>
                 
                 <div class="mb-3">
-                    <label for="sexe" class="form-label">Sexe</label>
-                    <select class="form-select" id="sexe" name="sexe">
-                        <option value="">-- Non spécifié --</option>
+                    <label for="sexe" class="form-label">Sexe *</label>
+                    <select class="form-select" id="sexe" name="sexe" required>
+                        <option value="">-- Sélectionnez --</option>
                         <option value="M" <?= (isset($formData['sexe']) && $formData['sexe'] == 'M') ? 'selected' : '' ?>>Masculin</option>
                         <option value="F" <?= (isset($formData['sexe']) && $formData['sexe'] == 'F') ? 'selected' : '' ?>>Féminin</option>
                     </select>
                 </div>
                 
                 <div class="mb-3">
-                    <label for="filiere_id" class="form-label">Filière *</label>
-                    <select class="form-select" id="filiere_id" name="filiere_id" required>
+                    <label for="filiere_id" class="form-label">Filière</label>
+                    <select class="form-select" id="filiere_id" name="filiere_id">
                         <option value="">-- Sélectionnez une filière --</option>
                         <?php foreach ($filieres as $filiere): ?>
                             <option value="<?= $filiere['id'] ?>" 

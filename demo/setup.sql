@@ -20,11 +20,11 @@ CREATE TABLE IF NOT EXISTS etudiants (
     nom VARCHAR(100) NOT NULL,
     prenom VARCHAR(100) NOT NULL,
     email VARCHAR(150) NOT NULL UNIQUE,
-    age INT,
-    sexe ENUM('M', 'F') DEFAULT NULL,
-    filiere_id INT NOT NULL,
+    age INT NOT NULL,
+    sexe ENUM('M', 'F') NOT NULL,
+    filiere_id INT DEFAULT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (filiere_id) REFERENCES filieres(id) ON DELETE CASCADE
+    FOREIGN KEY (filiere_id) REFERENCES filieres(id) ON DELETE SET NULL
 );
 
 -- Table des fichiers uploadés
