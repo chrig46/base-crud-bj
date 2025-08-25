@@ -36,10 +36,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $etudiantModel = new Model('etudiants', 'id');
         
         // Nettoyage des données saisies
-        $nom = Security::cleanInput($_POST['nom']);
-        $prenom = Security::cleanInput($_POST['prenom']);
-        $email = Security::cleanInput($_POST['email']);
-        $sexe = Security::cleanInput($_POST['sexe']);
+        $nom = trim($_POST['nom']);
+        $prenom = trim($_POST['prenom']);
+        $email = trim($_POST['email']);
+        $sexe = trim($_POST['sexe']);
         $age = (int)$_POST['age'];
         $filiere_id = (int)$_POST['filiere_id'];
         

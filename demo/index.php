@@ -119,7 +119,7 @@ try {
                                 <h6 class="text-success">Utilisation dans cette demo</h6>
                                 <ul class="list-unstyled">
                                     <li>• <code>new Model('etudiants', 'id')</code> - CRUD automatique</li>
-                                    <li>• <code>Security::cleanInput()</code> - nettoyage</li>
+                                    <li>• <code>trim()</code> - nettoyage des espaces</li>
                                     <li>• <code>Security::escape()</code> - protection XSS</li>
                                     <li>• <code>Alert::success()</code> - messages</li>
                                 </ul>

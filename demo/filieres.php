@@ -26,8 +26,8 @@ if ($_POST) {
         
         // Ajout d'un enregistrement
         if (isset($_POST['ajouter'])) {
-            $nom = Security::cleanInput($_POST['nom']);
-            $description = Security::cleanInput($_POST['description']);
+            $nom = trim($_POST['nom']);
+            $description = trim($_POST['description']);
             
             if (!empty($nom)) {
                 $success = $filiereModel->create([
@@ -48,8 +48,8 @@ if ($_POST) {
         // Modification d'un enregistrement
         if (isset($_POST['modifier'])) {
             $id = (int)$_POST['id'];
-            $nom = Security::cleanInput($_POST['nom']);
-            $description = Security::cleanInput($_POST['description']);
+            $nom = trim($_POST['nom']);
+            $description = trim($_POST['description']);
             
             if ($id > 0 && !empty($nom)) {
                 $success = $filiereModel->update($id, [
