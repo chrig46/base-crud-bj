@@ -81,8 +81,8 @@ $userModel = new Model('users', 'id');
 
 // Créer un utilisateur
 $userData = [
-    'nom' => Security::cleanInput($_POST['nom']),
-    'email' => Security::cleanInput($_POST['email'])
+    'nom' => trim($_POST['nom']),
+    'email' => trim($_POST['email'])
 ];
 $userModel->create($userData);
 
@@ -105,8 +105,8 @@ $userModel->delete(1);
   - Opérations automatiques sur toute table
   - Requêtes SQL personnalisees et sécurisées
 - Sécurité et validation des données
-  - Protection contre les attaques XSS
-  - Nettoyage automatique des entrées utilisateur
+  - Protection contre les attaques XSS avec Security::escape()
+  - Nettoyage des entrées utilisateur avec trim()
   - Validation des champs obligatoires
   - Hachage sécurisé des mots de passe
 - Configuration de la base de données et d'upload de fichiers
@@ -117,8 +117,7 @@ $userModel->delete(1);
   - Design responsive et moderne
 - Fonctions utilitaires (Helper)
   - Formatage de données (tailles, dates, texte)
-  - Génération de tokens et validation d'emails
-  - Création de slugs et troncature de texte
+  - Troncature de texte pour l'affichage
 
 ---
 
