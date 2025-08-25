@@ -20,21 +20,23 @@ use App\Alert;
 $message = '';
 
 // Traitement de la suppression d'un enregistrement
-if ($_POST && isset($_POST['supprimer'])) {
-    try {
-        $etudiantModel = new Model('etudiants', 'id');
-        $id = (int)$_POST['id'];
-        
-        if ($id > 0) {
-            $success = $etudiantModel->delete($id);
-            if ($success) {
-                $message = Alert::success("Enregistrement supprimé avec succès !");
-            } else {
-                $message = Alert::error("Erreur lors de la suppression");
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (isset($_POST['supprimer'])) {
+        try {
+            $etudiantModel = new Model('etudiants', 'id');
+            $id = (int)$_POST['id'];
+            
+            if ($id > 0) {
+                $success = $etudiantModel->delete($id);
+                if ($success) {
+                    $message = Alert::success("Enregistrement supprimé avec succès !");
+                } else {
+                    $message = Alert::error("Erreur lors de la suppression");
+                }
             }
+        } catch (Exception $e) {
+            $message = Alert::error('Erreur : ' . $e->getMessage());
         }
-    } catch (Exception $e) {
-        $message = Alert::error('Erreur : ' . $e->getMessage());
     }
 }
 

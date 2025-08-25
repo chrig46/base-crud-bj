@@ -27,23 +27,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         try {
             $etudiantModel = new Model('etudiants', 'id');
         
-        // Nettoyage des données saisies
-        $nom = trim($_POST['nom']);
-        $prenom = trim($_POST['prenom']);
-        $email = trim($_POST['email']);
-        $sexe = trim($_POST['sexe']);
-        $age = (int)$_POST['age'];
-        $filiere_id = (int)$_POST['filiere_id'];
-        
-        // Validation des données saisies
-        $errors = [];
-        if (empty($nom)) $errors[] = "Le nom est obligatoire";
-        if (empty($prenom)) $errors[] = "Le prénom est obligatoire";
-        if (empty($email)) $errors[] = "L'email est obligatoire";
-        if (!Security::isValidEmail($email)) $errors[] = "L'email n'est pas valide";
-        if ($age <= 0) $errors[] = "L'âge est obligatoire";
-        if (empty($sexe)) $errors[] = "Le sexe est obligatoire";
-        // if ($filiere_id <= 0) $errors[] = "Veuillez sélectionner une filière"; // Décommenter si filière obligatoire
+            // Nettoyage des données saisies
+            $nom = trim($_POST['nom']);
+            $prenom = trim($_POST['prenom']);
+            $email = trim($_POST['email']);
+            $sexe = trim($_POST['sexe']);
+            $age = (int)$_POST['age'];
+            $filiere_id = (int)$_POST['filiere_id'];
+            
+            // Validation des données saisies
+            $errors = [];
+            if (empty($nom)) $errors[] = "Le nom est obligatoire";
+            if (empty($prenom)) $errors[] = "Le prénom est obligatoire";
+            if (empty($email)) $errors[] = "L'email est obligatoire";
+            if (!Security::isValidEmail($email)) $errors[] = "L'email n'est pas valide";
+            if ($age <= 0) $errors[] = "L'âge est obligatoire";
+            if (empty($sexe)) $errors[] = "Le sexe est obligatoire";
+            // if ($filiere_id <= 0) $errors[] = "Veuillez sélectionner une filière"; // Décommenter si filière obligatoire
         
             if (empty($errors)) {
                 // Création de l'enregistrement en base

@@ -20,7 +20,7 @@ use App\Alert;
 $message = '';
 
 // Traitement des actions CRUD
-if ($_POST) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
         $filiereModel = new Model('filieres', 'id');
         
