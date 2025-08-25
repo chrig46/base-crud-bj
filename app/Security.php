@@ -30,18 +30,6 @@ class Security
         return htmlspecialchars($data, ENT_QUOTES, 'UTF-8');
     }
 
-    /**
-     * Nettoie et sécurise une entrée utilisateur
-     *
-     * @param string $data Données à nettoyer
-     * @return string Données nettoyées
-     */
-    public static function cleanInput(string $data): string
-    {
-        $data = trim($data);
-        $data = htmlspecialchars($data, ENT_QUOTES, 'UTF-8');
-        return $data;
-    }
 
     /**
      * Hache un mot de passe de façon sécurisée
