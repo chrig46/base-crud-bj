@@ -23,73 +23,87 @@ use App\Security;
 use App\Alert;
 use App\Helper;
 
-// Suppression de fichier
-if ($_POST && isset($_POST['action']) && $_POST['action'] === 'delete' && isset($_POST['file_id'])) {
+// Traitement des actions POST
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
-        $fileId = (int)$_POST['file_id'];
-        $fileModel = new Model('fichiers');
         
-        // Récupérer les informations du fichier avant suppression
-        $fichier = $fileModel->read($fileId);
-        
-        if ($fichier && is_array($fichier) && !empty($fichier)) {
-            $uploadConfig = Config::get('upload');
-            $filePath = $uploadConfig['directory'] . '/' . $fichier['nom'];
+        // Suppression de fichier
+        if (isset($_POST['action']) && $_POST['action'] === 'delete' && isset($_POST['file_id'])) {
+            $fileId = (int)$_POST['file_id'];
+            $fileModel = new Model('fichiers', 'id');
             
-            // Supprimer le fichier physique s'il existe
-            if (file_exists($filePath)) {
-                unlink($filePath);
-            }
+            // Récupérer les informations du fichier avant suppression
+            $fichier = $fileModel->read($fileId);
             
-            // Supprimer l'enregistrement de la base de données
-            $success = $fileModel->delete($fileId);
-            
-            if ($success) {
-                echo Alert::success("Fichier supprimé avec succès : " . Security::escape($fichier['titre']));
+            if (is_array($fichier) && !empty($fichier)) {
+                // Utiliser FileManager::delete() pour supprimer le fichier physique
+                $fileDeleted = FileManager::delete($fichier, 'nom'); // Colonne de nom de fichier db a specifier
+                
+                // Supprimer l'enregistrement de la base de données
+                $success = $fileModel->delete($fileId);
+                
+                if ($success) {
+                    if ($fileDeleted) {
+                        echo Alert::success("Fichier supprimé avec succès : " . Security::escape($fichier['titre']));
+                    } else {
+                        echo Alert::warning("Enregistrement supprimé mais le fichier physique n'a pas pu être supprimé");
+                    }
+                } else {
+                    echo Alert::error("Erreur lors de la suppression en base de données");
+                }
             } else {
-                echo Alert::error("Erreur lors de la suppression en base de données");
+                echo Alert::error("Fichier introuvable");
             }
-        } else {
-            echo Alert::error("Fichier introuvable");
         }
-    } catch (Throwable $e) {
-        echo Alert::error('Erreur lors de la suppression : ' . Security::escape($e->getMessage()));
-    }
-}
-// Upload de fichier avec informations supplémentaires
-elseif ($_POST && isset($_FILES['fichier']) && $_FILES['fichier']['error'] === UPLOAD_ERR_OK) {
-    try {
-        $uploadConfig = Config::get('upload');
-        $filename = FileManager::upload($_FILES['fichier'], $uploadConfig['directory'], $uploadConfig['allowed_extensions'], $uploadConfig['max_size']);
         
-        if ($filename) {
-            // Récupérer les informations du formulaire
-            $titre = Security::cleanInput($_POST['titre'] ?? '');
+        // Upload de fichier avec informations supplémentaires
+        if (isset($_FILES['fichier']) && $_FILES['fichier']['error'] === UPLOAD_ERR_OK) {
+            $filename = FileManager::upload($_FILES['fichier']);
             
-            // Sauvegarder en base de données
-            $fileModel = new Model('fichiers');
-            $success = $fileModel->create([
-                'nom' => $filename,
-                'nom_original' => $_FILES['fichier']['name'],
-                'titre' => $titre,
-                'taille' => $_FILES['fichier']['size'],
-                'uploaded_at' => date('Y-m-d H:i:s')
-            ]);
-            
-            if ($success) {
-                echo Alert::success("Fichier uploadé avec succès : " . $filename);
+            if ($filename) {
+                // Récupérer les informations du formulaire lorsque le fichier est bien uploadé
+                $titre = trim($_POST['titre']);
+                
+                // Sauvegarder en base de données
+                $fileModel = new Model('fichiers', 'id');
+                $success = $fileModel->create([
+                    // 'nom' est imperatif - Contient le nom du fichier stocké sur le server
+                    'nom' => $filename,
+                    'nom_original' => $_FILES['fichier']['name'],
+                    'titre' => $titre,
+                    'taille' => $_FILES['fichier']['size'],
+                    'uploaded_at' => date('Y-m-d H:i:s')
+                ]);
+                
+                if ($success) {
+                    echo Alert::success("Fichier uploadé avec succès : " . $filename);
+                } else {
+                    echo Alert::warning("Fichier uploadé mais erreur BDD");
+                }
             } else {
-                echo Alert::warning("Fichier uploadé mais erreur BDD");
+                echo Alert::error("Échec de l'upload");
             }
         } else {
-            echo Alert::error("Échec de l'upload");
+            echo Alert::error("Erreur lors de l'upload du fichier");
         }
     } catch (Throwable $e) {
         echo Alert::error('Erreur : ' . Security::escape($e->getMessage()));
     }
-} elseif ($_POST) {
-    echo Alert::error("Erreur lors de l'upload du fichier");
 }
+
+// Chargement des fichiers pour l'affichage
+$fichiers = [];
+$fichiersError = '';
+try {
+    $fileModel = new Model('fichiers', 'id');
+    $fichiers = $fileModel->read() ?: [];
+} catch (Throwable $e) {
+    $fichiersError = 'Erreur BDD : ' . Security::escape($e->getMessage());
+}
+
+// Recuperation des informations d'upload pour l'affichage - Si souhaitable
+$uploadInfo = Config::getUploadInfo();
+
 
 ?>
 <!DOCTYPE html>
@@ -108,22 +122,13 @@ elseif ($_POST && isset($_FILES['fichier']) && $_FILES['fichier']['error'] === U
         <div class="mb-4">
             <form method="POST" enctype="multipart/form-data">
                 <div class="mb-3">
-                    <label class="form-label">Fichier</label>
-                    <input type="file" name="fichier" class="form-control" required>
-                    <?php
-                    try {
-                        $uploadConfig = Config::get('upload');
-                        $extensions = strtoupper(implode(', ', $uploadConfig['allowed_extensions']));
-                        $maxSize = Helper::formatBytes((int)$uploadConfig['max_size']);
-                        echo "<div class='form-text'>$extensions - Max $maxSize</div>";
-                    } catch (Throwable $e) {
-                        echo "<div class='form-text'>Formats autorisés - Max 2 MB</div>";
-                    }
-                    ?>
+                    <label for="fichier" class="form-label">Fichier</label>
+                    <input type="file" name="fichier" id="fichier" class="form-control" required>
+                    <div class="form-text"><?= $uploadInfo ?></div>
                 </div>
                 <div class="mb-3">
-                    <label class="form-label">Titre</label>
-                    <input type="text" name="titre" class="form-control" required>
+                    <label for="titre" class="form-label">Titre</label>
+                    <input type="text" name="titre" class="form-control" id="titre" required>
                 </div>
                 <button type="submit" class="btn btn-success w-100">Uploader</button>
             </form>
@@ -139,42 +144,48 @@ elseif ($_POST && isset($_FILES['fichier']) && $_FILES['fichier']['error'] === U
                         <th>Nom original</th>
                         <th>Taille</th>
                         <th>Date</th>
+                        <th>Aperçu</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <?php
-                    try {
-                        $fileModel = new Model('fichiers');
-                        $fichiers = $fileModel->read();
-                        
-                        if ($fichiers) {
-                            foreach ($fichiers as $fichier) {
-                                $uploadConfig = Config::get('upload');
-                                $filePath = $uploadConfig['directory'] . '/' . $fichier['nom'];
-                                $size = FileManager::humanFileSize($filePath);
-                                
-                                echo "<tr>";
-                                echo "<td>" . Security::escape($fichier['titre']) . "</td>";
-                                echo "<td>" . Security::escape($fichier['nom_original']) . "</td>";
-                                echo "<td>$size</td>";
-                                echo "<td>" . Security::escape($fichier['uploaded_at']) . "</td>";
-                                echo "<td>";
-                                echo "<form method='POST' style='display:inline;' onsubmit='return confirm(\"Êtes-vous sûr de vouloir supprimer ce fichier ?\")'>";
-                                echo "<input type='hidden' name='action' value='delete'>";
-                                echo "<input type='hidden' name='file_id' value='" . $fichier['id'] . "'>";
-                                echo "<button type='submit' class='btn btn-danger btn-sm'>Supprimer</button>";
-                                echo "</form>";
-                                echo "</td>";
-                                echo "</tr>";
-                            }
-                        } else {
-                            echo "<tr><td colspan='5' class='text-center'>Aucun fichier</td></tr>";
-                        }
-                    } catch (Throwable $e) {
-                        echo "<tr><td colspan='5' class='text-center text-danger'>Erreur BDD : " . Security::escape($e->getMessage()) . "</td></tr>";
-                    }
-                    ?>
+                    <?php if ($fichiersError): ?>
+                        <tr>
+                            <td colspan="6" class="text-center text-danger"><?= $fichiersError ?></td>
+                        </tr>
+                    <?php elseif (empty($fichiers)): ?>
+                        <tr>
+                            <td colspan="6" class="text-center">Aucun fichier</td>
+                        </tr>
+                    <?php else: ?>
+                        <?php foreach ($fichiers as $fichier): ?>
+                            <tr>
+                                <td><?= Security::escape($fichier['titre']) ?></td>
+                                <td><?= Security::escape($fichier['nom_original']) ?></td>
+                                <td><?= FileManager::getUploadedFileSize($fichier['nom']) ?></td>
+                                <td><?= Security::escape($fichier['uploaded_at']) ?></td>
+                                <td>
+                                    <?php 
+                                    $fileUrl = FileManager::getUploadedFileUrl($fichier['nom']);
+                                    $extension = strtolower(pathinfo($fichier['nom_original'], PATHINFO_EXTENSION));
+                                    $imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'];
+                                    ?>
+                                    <?php if (in_array($extension, $imageExtensions)): ?>
+                                        <img src="<?= $fileUrl ?>" style="max-height: 60px; max-width: 80px;" class="img-thumbnail" alt="Aperçu">
+                                    <?php else: ?>
+                                        <span class="text-muted">Pas d'aperçu</span>
+                                    <?php endif; ?>
+                                </td>
+                                <td>
+                                    <form method="POST" style="display:inline;" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce fichier ?')">
+                                        <input type="hidden" name="action" value="delete">
+                                        <input type="hidden" name="file_id" value="<?= $fichier['id'] ?>">
+                                        <button type="submit" class="btn btn-danger btn-sm">Supprimer</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
                 </tbody>
             </table>
         </div>

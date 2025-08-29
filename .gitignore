@@ -6,15 +6,15 @@ add.php
 edit.php
 list.php
 delete.php
-#upload.php
 database_setup.sql
 
 # Documentation complète
 docs/
 
-# Fichiers uploadés
+# Fichiers uploadés (ignorer le contenu mais garder le dossier)
 uploads/*
 !uploads/.gitkeep
+!uploads/README.md
 
 # Fichiers temporaires et cache
 *.tmp
@@ -32,6 +32,7 @@ Thumbs.db
 logs/
 
 # Fichiers IDE
+/.windsurf/
 .vscode/
 .idea/
 *.swp
@@ -43,12 +44,10 @@ desktop.ini
 $RECYCLE.BIN/
 
 # Fichiers système macOS
-.DS_Store
 .AppleDouble
 .LSOverride
 
 # Fichiers système Linux
-*~
 .fuse_hidden*
 .directory
 .Trash-*
@@ -62,6 +61,22 @@ composer.lock
 *.backup
 *.old
 
-# Fichiers de test temporaires
+# Fichiers de test et développement temporaires
+test.php
 test_*.php
 debug_*.php
+scratch.php
+tmp_*.php
+
+# Fichiers de configuration locale (si ajoutés plus tard)
+config/local.php
+config/dev.php
+
+# Base de données locale (si SQLite utilisé)
+*.sqlite
+*.sqlite3
+*.db
+
+# Fichiers PHP temporaires
+php_errors.log
+error_log

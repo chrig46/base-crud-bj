@@ -2,6 +2,8 @@
 
 namespace App;
 
+use Throwable;
+
 /**
  * Classe Config - Gestionnaire de configuration
  * 
@@ -51,6 +53,29 @@ class Config
         self::$configs[$file] = require $configPath;
 
         return self::$configs[$file];
+    }
+
+    /**
+     * Récupère les informations d'upload formatées pour l'affichage
+     * 
+     * Cette méthode retourne une chaîne formatée avec les extensions autorisées
+     * et la taille maximale des fichiers, prête pour l'affichage dans les formulaires.
+     * 
+     * @return string Informations d'upload formatées (ex: "JPG, PNG - Max 2 MB")
+     * 
+     * @example
+     * echo Config::getUploadInfo(); // "JPG, PNG, PDF - Max 5 MB"
+     */
+    public static function getUploadInfo(): string
+    {
+        try {
+            $uploadConfig = self::get('upload');
+            $extensions = strtoupper(implode(', ', $uploadConfig['allowed_extensions']));
+            $maxSize = Helper::formatBytes((int)$uploadConfig['max_size']);
+            return "$extensions - Max $maxSize";
+        } catch (Throwable $e) {
+            return 'Max 2 MB';
+        }
     }
 
     /**
