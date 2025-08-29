@@ -99,6 +99,43 @@ $userModel->update(1, ['nom' => 'Nouveau nom']);
 $userModel->delete(1);
 ```
 
+### Upload de fichiers
+
+```php
+<?php
+require_once 'app/FileManager.php';
+require_once 'app/Model.php';
+
+use App\FileManager;
+use App\Model;
+
+// Upload simple d'un fichier
+if ($_FILES['fichier']['error'] === UPLOAD_ERR_OK) {
+    $filename = FileManager::upload($_FILES['fichier']);
+    
+    if ($filename) {
+        // Sauvegarder en BDD
+        $fileModel = new Model('fichiers', 'id');
+        $fileModel->create([
+            'titre' => $_POST['titre'],
+            'nom' => $filename,
+            'nom_original' => $_FILES['fichier']['name'],
+            'taille' => $_FILES['fichier']['size']
+        ]);
+        
+        echo "Fichier uploadé : $filename";
+    }
+}
+?>
+
+<!-- Formulaire HTML -->
+<form method="POST" enctype="multipart/form-data">
+    <input type="file" name="fichier" required>
+    <input type="text" name="titre" placeholder="Titre" required>
+    <button type="submit">Uploader</button>
+</form>
+```
+
 ## Fonctionnalités
 
 - CRUD complet (Create, Read, Update, Delete)
